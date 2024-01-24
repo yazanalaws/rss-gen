@@ -14,17 +14,18 @@ const getChannelHtml = async (channelName) => {
 const getRumblePosts = async (channelName) => {
   const html = await getChannelHtml(channelName);
   const $ = cheerio.load(html);
-  const items = $(".video-listing-entry", html).toArray();
+  const items = $(".videostream", html).toArray();
   const posts = items.map((item) => {
-    const title = $(".video-item--title", item).text();
-    const url_rel = $(".video-item--a", item).attr("href");
+    const title = $(".thumbnail__title", item).text();
+    const url_rel = $(".videostream__link", item).attr("href");
     const url_abs = `https://rumble.com${url_rel}`;
-    const thumbnail = $(".video-item--img", item).attr("src");
-    const date = $(".video-item--time", item).attr("datetime");
-    const views = $(".video-item--views", item).attr("data-value") || "hidden";
-    const duration = $(".video-item--duration", item).attr("data-value");
-    const description = `Views: ${views}<br/>Duration: ${duration}`;
-    return { title, link: url_abs, thumbnail, date, description };
+    const thumbnail = $(".thumbnail__image", item).attr("src");
+    const date = $(".videostream__time", item).attr("datetime");
+    const views = $(".videostream__views", item).attr("data-views");
+    const duration = $(".videostream__status--duration", item).text();
+    const desc = $('.videostream__description ').text();
+    const description = `${desc} , views : ${views} , duration: ${duration}`;
+    return { title, link: url_abs, thumbnail, date, description, views , duration };
   });
   return posts;
 };
